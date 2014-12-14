@@ -9,21 +9,13 @@
 #import "ATSpring.h"
 #import "ATParticle.h"
 
-
-@interface ATSpring ()
-// reserved
-@end
-
-
 @implementation ATSpring
 
-@synthesize stiffness = stiffness_;
-
-- (instancetype) init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
-        stiffness_ = 1000.0;
+        _stiffness = 1000.0;
     }
     return self;
 }
@@ -38,18 +30,13 @@
     return (ATParticle *)self.destinationNode; 
 }
 
-
 #pragma mark - Geometry
 
-- (CGFloat) distanceToParticle:(ATParticle *)particle 
+- (CGFloat)distanceToParticle:(ATParticle *)particle
 {
     NSParameterAssert(particle != nil);
     
     return [self distanceToNode:particle];
 }
-
-
-#pragma mark - Internal Interface
-
 
 @end
