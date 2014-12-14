@@ -9,17 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface ATSystemParams : NSObject <NSCoding, NSCopying>
-{
-    
-@private
-    CGFloat repulsion_;
-    CGFloat stiffness_;
-    CGFloat friction_;
-    CGFloat deltaTime_;
-    BOOL    gravity_;
-    CGFloat precision_;
-    CGFloat timeout_;
-}
 
 @property (nonatomic, assign) CGFloat repulsion;
 @property (nonatomic, assign) CGFloat stiffness;

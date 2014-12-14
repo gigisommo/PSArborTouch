@@ -8,33 +8,19 @@
 
 #import "ATSystemParams.h"
 
-
-@interface ATSystemParams ()
-// Reserved
-@end
-
-
 @implementation ATSystemParams
-
-@synthesize repulsion   = repulsion_;
-@synthesize stiffness   = stiffness_;
-@synthesize friction    = friction_;
-@synthesize deltaTime   = deltaTime_;
-@synthesize gravity     = gravity_;
-@synthesize precision   = precision_;
-@synthesize timeout     = timeout_;
 
 - (instancetype) init
 {
     self = [super init];
     if (self) {        
-        repulsion_   = 1000;
-        stiffness_   = 600;
-        friction_    = 0.5;
-        deltaTime_   = 0.02;
-        gravity_     = YES;
-        precision_   = 0.6;
-        timeout_     = 1000 / 50;
+        _repulsion = 1000;
+        _stiffness = 600;
+        _friction = 0.5;
+        _deltaTime = 0.02;
+        _gravity = YES;
+        _precision = 0.6;
+        _timeout = 1000 / 50;
     }
     return self;
 }
@@ -45,13 +31,13 @@
 {
     id theCopy = [[[self class] allocWithZone:zone] init];  // use designated initializer
     
-    [theCopy setRepulsion:repulsion_];
-    [theCopy setStiffness:stiffness_];
-    [theCopy setFriction:friction_];
-    [theCopy setDeltaTime:deltaTime_];
-    [theCopy setGravity:gravity_];
-    [theCopy setPrecision:precision_];
-    [theCopy setTimeout:timeout_];
+    [theCopy setRepulsion:self.repulsion];
+    [theCopy setStiffness:self.stiffness];
+    [theCopy setFriction:self.friction];
+    [theCopy setDeltaTime:self.deltaTime];
+    [theCopy setGravity:self.gravity];
+    [theCopy setPrecision:self.precision];
+    [theCopy setTimeout:self.timeout];
     
     return theCopy;
 }
@@ -61,26 +47,26 @@
 
 - (void) encodeWithCoder:(NSCoder *)encoder 
 {
-    [encoder encodeFloat:repulsion_ forKey:@"repulsion"];
-    [encoder encodeFloat:stiffness_ forKey:@"stiffness"];
-    [encoder encodeFloat:friction_ forKey:@"friction"];
-    [encoder encodeFloat:deltaTime_ forKey:@"deltaTime"];
-    [encoder encodeBool:gravity_ forKey:@"gravity"];
-    [encoder encodeFloat:precision_ forKey:@"precision"];
-    [encoder encodeFloat:timeout_ forKey:@"timeout"];
+    [encoder encodeFloat:self.repulsion forKey:@"repulsion"];
+    [encoder encodeFloat:self.stiffness forKey:@"stiffness"];
+    [encoder encodeFloat:self.friction forKey:@"friction"];
+    [encoder encodeFloat:self.deltaTime forKey:@"deltaTime"];
+    [encoder encodeBool:self.gravity forKey:@"gravity"];
+    [encoder encodeFloat:self.precision forKey:@"precision"];
+    [encoder encodeFloat:self.timeout forKey:@"timeout"];
 }
 
 - (instancetype) initWithCoder:(NSCoder *)decoder 
 {
     self = [super init];
     if (self) {
-        repulsion_  = [decoder decodeFloatForKey:@"repulsion"];
-        stiffness_  = [decoder decodeFloatForKey:@"stiffness"];
-        friction_   = [decoder decodeFloatForKey:@"friction"];
-        deltaTime_  = [decoder decodeFloatForKey:@"deltaTime"];
-        gravity_    = [decoder decodeBoolForKey:@"gravity"];
-        precision_  = [decoder decodeFloatForKey:@"precision"];
-        timeout_    = [decoder decodeFloatForKey:@"timeout"];
+        _repulsion = [decoder decodeFloatForKey:@"repulsion"];
+        _stiffness = [decoder decodeFloatForKey:@"stiffness"];
+        _friction = [decoder decodeFloatForKey:@"friction"];
+        _deltaTime = [decoder decodeFloatForKey:@"deltaTime"];
+        _gravity = [decoder decodeBoolForKey:@"gravity"];
+        _precision = [decoder decodeFloatForKey:@"precision"];
+        _timeout = [decoder decodeFloatForKey:@"timeout"];
     }
     return self;
 }
