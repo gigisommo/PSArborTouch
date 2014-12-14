@@ -22,7 +22,7 @@
 @synthesize tempMass    = tempMass_;
 @synthesize connections = connections_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {
@@ -34,7 +34,7 @@
     return self;
 }
 
-- (id) initWithVelocity:(CGPoint)velocity 
+- (instancetype) initWithVelocity:(CGPoint)velocity 
                   force:(CGPoint)force 
                tempMass:(CGFloat)tempMass 
 {

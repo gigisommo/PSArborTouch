@@ -33,7 +33,7 @@
 @synthesize physics = physics_;
 @synthesize delegate = delegate_;
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self) {

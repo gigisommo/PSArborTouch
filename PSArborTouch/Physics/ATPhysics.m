@@ -45,7 +45,7 @@
 @synthesize theta       = theta_;
 @synthesize bhTree      = bhTree_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {
@@ -68,7 +68,7 @@
     return self;
 }
 
-- (id) initWithDeltaTime:(CGFloat)deltaTime 
+- (instancetype) initWithDeltaTime:(CGFloat)deltaTime 
                stiffness:(CGFloat)stiffness 
                repulsion:(CGFloat)repulsion 
                 friction:(CGFloat)friction 

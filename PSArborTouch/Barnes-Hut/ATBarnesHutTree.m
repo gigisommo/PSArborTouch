@@ -14,18 +14,18 @@
 
 @interface ATBarnesHutTree ()
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BHLocation) {
     BHLocationUD = 0,
     BHLocationNW,
     BHLocationNE,
     BHLocationSE,
     BHLocationSW,
-} BHLocation;
+} ;
 
 - (BHLocation) _whichQuad:(ATParticle *)particle ofBranch:(ATBarnesHutBranch *)branch;
 - (void) _setQuad:(BHLocation)location ofBranch:(ATBarnesHutBranch *)branch withObject:(id)object;
 - (id) _getQuad:(BHLocation)location ofBranch:(ATBarnesHutBranch *)branch;
-- (ATBarnesHutBranch *) _dequeueBranch;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) ATBarnesHutBranch *_dequeueBranch;
 
 @end
 
@@ -36,7 +36,7 @@ typedef enum {
 @synthesize bounds = bounds_;
 @synthesize theta = theta_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {

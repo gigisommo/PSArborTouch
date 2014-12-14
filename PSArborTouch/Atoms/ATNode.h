@@ -31,14 +31,14 @@
 
 @property (nonatomic, strong) NSMutableDictionary *userData;
 
-- (id) init;
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
-- (id) initWithName:(NSString *)name 
+- (instancetype) initWithName:(NSString *)name 
                mass:(CGFloat)mass 
            position:(CGPoint)position 
               fixed:(BOOL)fixed;
 
-- (id) initWithName:(NSString *)name 
+- (instancetype) initWithName:(NSString *)name 
            userData:(NSMutableDictionary *)data;
 
 @end

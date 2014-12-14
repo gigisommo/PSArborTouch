@@ -23,6 +23,6 @@
 @property (nonatomic, assign) CGFloat mean;
 @property (nonatomic, assign) NSUInteger count;
 
-- (id) init;
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
 @end

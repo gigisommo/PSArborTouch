@@ -31,13 +31,13 @@
 
 @property (nonatomic, strong) NSMutableDictionary *userData;
 
-- (id) init;
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
-- (id) initWithSource:(ATNode *)source 
+- (instancetype) initWithSource:(ATNode *)source 
                target:(ATNode *)target 
                length:(CGFloat)length;
 
-- (id) initWithSource:(ATNode *)source
+- (instancetype) initWithSource:(ATNode *)source
                target:(ATNode *)target
              userData:(NSMutableDictionary *)data;
 

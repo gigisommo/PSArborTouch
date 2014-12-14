@@ -20,7 +20,7 @@
 
 - (CGRect) ensureRect:(CGRect)rect minimumDimentions:(CGFloat)minimum;
 - (CGRect) tweenRect:(CGRect)sourceRect toRect:(CGRect)targetRect delta:(CGFloat)delta;
-- (CGRect) translationBounds;
+@property (NS_NONATOMIC_IOSONLY, readonly) CGRect translationBounds;
 
 @end
 
@@ -40,7 +40,7 @@
     [self updateSimulation:parameters_];
 }
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {
@@ -54,7 +54,7 @@
     return self;
 }
 
-- (id) initWithState:(ATSystemState *)state parameters:(ATSystemParams *)parameters 
+- (instancetype) initWithState:(ATSystemState *)state parameters:(ATSystemParams *)parameters 
 {
     self = [self init];
     if (self) {

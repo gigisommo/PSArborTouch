@@ -11,10 +11,10 @@
 #import "ATKernel.h"
 
 
-typedef enum {
+typedef NS_ENUM(NSInteger, ATViewConversion) {
     ATViewConversionStretch = 0,    // stretch the simulation coordinates to match view aspect
     ATViewConversionScale,          // scale the simluation coordinates to best fit view
-} ATViewConversion;
+} ;
 
 
 @class ATSystemState;
@@ -51,8 +51,8 @@ typedef enum {
 // Changes to your copy do not take effect on the system until you pass them back
 @property (nonatomic, copy) ATSystemParams *parameters;
 
-- (id)init;
-- (id)initWithState:(ATSystemState *)state parameters:(ATSystemParams *)parameters;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithState:(ATSystemState *)state parameters:(ATSystemParams *)parameters;
 
 
 #pragma mark - Viewport Management

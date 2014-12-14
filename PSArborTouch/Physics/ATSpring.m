@@ -19,7 +19,7 @@
 
 @synthesize stiffness = stiffness_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {

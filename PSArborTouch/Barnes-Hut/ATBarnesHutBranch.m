@@ -25,7 +25,7 @@
 @synthesize se = se_;
 @synthesize sw = sw_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {
@@ -41,7 +41,7 @@
     return self;
 }
 
-- (id) initWithBounds:(CGRect)bounds mass:(CGFloat)mass position:(CGPoint)position 
+- (instancetype) initWithBounds:(CGRect)bounds mass:(CGFloat)mass position:(CGPoint)position 
 {
     self = [self init];
     if (self) {

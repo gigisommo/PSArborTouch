@@ -21,7 +21,7 @@
 @synthesize mean    = mean_;
 @synthesize count   = count_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {

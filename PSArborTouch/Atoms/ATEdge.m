@@ -28,7 +28,7 @@ static NSInteger nextEdgeIndex_ = -1;
 @synthesize length      = length_;
 @synthesize userData    = data_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {
@@ -41,7 +41,7 @@ static NSInteger nextEdgeIndex_ = -1;
     return self;
 }
 
-- (id) initWithSource:(ATNode *)source target:(ATNode *)target length:(CGFloat)length 
+- (instancetype) initWithSource:(ATNode *)source target:(ATNode *)target length:(CGFloat)length 
 {
     self = [self init];
     if (self) {
@@ -52,7 +52,7 @@ static NSInteger nextEdgeIndex_ = -1;
     return self;
 }
 
-- (id) initWithSource:(ATNode *)source target:(ATNode *)target userData:(NSMutableDictionary *)data 
+- (instancetype) initWithSource:(ATNode *)source target:(ATNode *)target userData:(NSMutableDictionary *)data 
 {
     self = [self init];
     if (self) {
@@ -92,9 +92,9 @@ static NSInteger nextEdgeIndex_ = -1;
     [encoder encodeObject:data_ forKey:@"data"];
 }
 
-- (id)initWithCoder:(NSCoder *)decoder 
+- (instancetype)initWithCoder:(NSCoder *)decoder 
 {
-    self = [super init];
+    self = [self init];
     if (self) {
         source_ = [decoder decodeObjectForKey:@"source"];
         target_ = [decoder decodeObjectForKey:@"target"];

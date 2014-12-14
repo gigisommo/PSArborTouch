@@ -26,7 +26,7 @@ static NSInteger nextNodeIndex_ = 1;
 @synthesize fixed       = fixed_;
 @synthesize userData    = data_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {
@@ -40,7 +40,7 @@ static NSInteger nextNodeIndex_ = 1;
     return self;
 }
 
-- (id) initWithName:(NSString *)name mass:(CGFloat)mass position:(CGPoint)position fixed:(BOOL)fixed 
+- (instancetype) initWithName:(NSString *)name mass:(CGFloat)mass position:(CGPoint)position fixed:(BOOL)fixed 
 {
     self = [self init];
     if (self) {
@@ -52,7 +52,7 @@ static NSInteger nextNodeIndex_ = 1;
     return self;
 }
 
-- (id) initWithName:(NSString *)name userData:(NSMutableDictionary *)data 
+- (instancetype) initWithName:(NSString *)name userData:(NSMutableDictionary *)data 
 {
     self = [self init];
     if (self) {
@@ -79,9 +79,9 @@ static NSInteger nextNodeIndex_ = 1;
     [encoder encodeObject:data_ forKey:@"data"];
 }
 
-- (id) initWithCoder:(NSCoder *)decoder 
+- (instancetype) initWithCoder:(NSCoder *)decoder 
 {
-    self = [super init];
+    self = [self init];
     if (self) {
         name_       = [decoder decodeObjectForKey:@"name"];
         mass_       = [decoder decodeFloatForKey:@"mass"];

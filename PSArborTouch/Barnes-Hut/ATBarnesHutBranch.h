@@ -31,9 +31,9 @@
 @property (nonatomic, strong) id se;
 @property (nonatomic, strong) id sw;
 
-- (id) init;
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
-- (id) initWithBounds:(CGRect)bounds 
+- (instancetype) initWithBounds:(CGRect)bounds 
                  mass:(CGFloat)mass 
              position:(CGPoint)position;
 

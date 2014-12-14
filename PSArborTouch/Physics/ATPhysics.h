@@ -63,13 +63,13 @@
 @property (nonatomic, assign) CGFloat theta;
 
 
-- (id)init;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
 
-- (id)initWithDeltaTime:(CGFloat)deltaTime 
+- (instancetype)initWithDeltaTime:(CGFloat)deltaTime 
               stiffness:(CGFloat)stiffness 
               repulsion:(CGFloat)repulsion 
                friction:(CGFloat)friction;
 
-- (BOOL) update;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL update;
 
 @end

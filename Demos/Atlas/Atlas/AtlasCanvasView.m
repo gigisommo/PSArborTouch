@@ -28,7 +28,7 @@
 - (void) drawSpring:(ATSpring *)spring inContext:(CGContextRef)context;
 - (void) drawParticle:(ATParticle *)particle inContext:(CGContextRef)context;
 - (void) drawParticleText:(ATParticle *)particle inContext:(CGContextRef)context;
-- (UIFont *)font;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) UIFont *font;
 
 @end
 
@@ -38,7 +38,7 @@
 @synthesize system = system_;
 @synthesize debugDrawing = debugDrawing_;
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {

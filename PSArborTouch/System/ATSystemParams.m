@@ -24,7 +24,7 @@
 @synthesize precision   = precision_;
 @synthesize timeout     = timeout_;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {        
@@ -70,7 +70,7 @@
     [encoder encodeFloat:timeout_ forKey:@"timeout"];
 }
 
-- (id) initWithCoder:(NSCoder *)decoder 
+- (instancetype) initWithCoder:(NSCoder *)decoder 
 {
     self = [super init];
     if (self) {

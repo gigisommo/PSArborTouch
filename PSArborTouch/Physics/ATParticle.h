@@ -24,9 +24,9 @@
 @property (nonatomic, assign) CGFloat tempMass;
 @property (nonatomic, assign) NSUInteger connections;
 
-- (id) init;
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
-- (id) initWithVelocity:(CGPoint)velocity 
+- (instancetype) initWithVelocity:(CGPoint)velocity 
                   force:(CGPoint)force 
                tempMass:(CGFloat)tempMass;
 

@@ -43,7 +43,7 @@
     return [names_ allValues]; 
 }
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if (self) {
@@ -180,7 +180,7 @@
     [encoder encodeObject:names_ forKey:@"names"];
 }
 
-- (id) initWithCoder:(NSCoder *)decoder 
+- (instancetype) initWithCoder:(NSCoder *)decoder 
 {
     self = [super init];
     if (self) {

@@ -22,7 +22,7 @@
 
 @property (nonatomic, assign) CGFloat stiffness;
 
-- (id) init;
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
 - (CGFloat) distanceToParticle:(ATParticle *)particle;
 

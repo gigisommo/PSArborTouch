@@ -27,7 +27,7 @@
 @property (nonatomic, readonly, assign) CGRect bounds;
 @property (nonatomic, readonly, assign) CGFloat theta;
 
-- (id) init;
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
 - (void) updateWithBounds:(CGRect)bounds theta:(CGFloat)theta;
 - (void) insertParticle:(ATParticle *)newParticle;
