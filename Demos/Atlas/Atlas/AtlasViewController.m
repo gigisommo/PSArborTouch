@@ -10,7 +10,6 @@
 #import "AtlasCanvasView.h"
 
 #import "PSArborTouch.h"
-#import "CJSONDeserializer.h"
 
 
 @interface AtlasViewController ()
@@ -115,10 +114,11 @@
         NSData *theJSONData = [NSData dataWithContentsOfFile:filePath];
         if (theJSONData) {
             // Parse the file
-            NSError *theError = nil;
-            NSDictionary *theObject = [[CJSONDeserializer deserializer] deserializeAsDictionary:theJSONData 
-                                                                                          error:&theError];
-            if (theObject) {
+            NSError *error = nil;
+            NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:theJSONData
+                                                                       options:kNilOptions
+                                                                         error:&error];
+            if (parsedData) {
                 
                 // Add Nodes and Edges
                 
@@ -126,7 +126,7 @@
                 // For example, node creation might be in the GCD queue but when we query if it exists, it
                 // has not made it there yet.
                 
-                NSDictionary *nodes = theObject[@"nodes"];
+                NSDictionary *nodes = parsedData[@"nodes"];
                 
                 [nodes enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
                     
@@ -135,7 +135,7 @@
                 }];
                 
                 
-                NSDictionary *edges = theObject[@"edges"];
+                NSDictionary *edges = parsedData[@"edges"];
                 
                 [edges enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
                     
@@ -151,13 +151,16 @@
                 
                 }];
                 
-            } else {
-                NSLog(@"Could not parse JSON file.");
             }
-        } else {
+            else {
+                NSLog(@"Could not parse JSON file (error: %@)", error);
+            }
+        }
+        else {
             NSLog(@"Could not load NSData from file.");
         }
-    } else {
+    }
+    else {
         NSLog(@"Please include america.json in the project resources.");
     }
 }

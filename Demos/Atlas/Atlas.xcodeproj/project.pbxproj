@@ -41,9 +41,6 @@
 		4F4DA0F91439E2E300AAB205 /* back-button-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F4DA0F51439E2E300AAB205 /* back-button-light.png */; };
 		4F4DA0FA1439E2E300AAB205 /* home-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F4DA0F61439E2E300AAB205 /* home-arrow.png */; };
 		4F4DA0FB1439E2E300AAB205 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F4DA0F71439E2E300AAB205 /* logo.png */; };
-		4F70F7A3180B9BAE0034A304 /* CJSONDeserializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F70F79D180B9BAE0034A304 /* CJSONDeserializer.m */; };
-		4F70F7A4180B9BAE0034A304 /* CJSONSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F70F79F180B9BAE0034A304 /* CJSONSerializer.m */; };
-		4F70F7A5180B9BAE0034A304 /* NSDictionary_JSONExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F70F7A2180B9BAE0034A304 /* NSDictionary_JSONExtensions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,13 +99,6 @@
 		4F4DA0F51439E2E300AAB205 /* back-button-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "back-button-light.png"; path = "style/back-button-light.png"; sourceTree = SOURCE_ROOT; };
 		4F4DA0F61439E2E300AAB205 /* home-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "home-arrow.png"; path = "style/home-arrow.png"; sourceTree = SOURCE_ROOT; };
 		4F4DA0F71439E2E300AAB205 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = logo.png; path = style/logo.png; sourceTree = SOURCE_ROOT; };
-		4F70F79C180B9BAE0034A304 /* CJSONDeserializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSONDeserializer.h; sourceTree = "<group>"; };
-		4F70F79D180B9BAE0034A304 /* CJSONDeserializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJSONDeserializer.m; sourceTree = "<group>"; };
-		4F70F79E180B9BAE0034A304 /* CJSONSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSONSerializer.h; sourceTree = "<group>"; };
-		4F70F79F180B9BAE0034A304 /* CJSONSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJSONSerializer.m; sourceTree = "<group>"; };
-		4F70F7A0180B9BAE0034A304 /* JSONRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONRepresentation.h; sourceTree = "<group>"; };
-		4F70F7A1180B9BAE0034A304 /* NSDictionary_JSONExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDictionary_JSONExtensions.h; sourceTree = "<group>"; };
-		4F70F7A2180B9BAE0034A304 /* NSDictionary_JSONExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionary_JSONExtensions.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,7 +170,6 @@
 		4F4D9FA61439DB4B00AAB205 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				4F54693A1441B490006A260F /* TouchJSON */,
 				4F4DA0E31439E2BF00AAB205 /* Maps */,
 			);
 			name = Model;
@@ -325,21 +314,6 @@
 			name = Images;
 			sourceTree = "<group>";
 		};
-		4F54693A1441B490006A260F /* TouchJSON */ = {
-			isa = PBXGroup;
-			children = (
-				4F70F79C180B9BAE0034A304 /* CJSONDeserializer.h */,
-				4F70F79D180B9BAE0034A304 /* CJSONDeserializer.m */,
-				4F70F79E180B9BAE0034A304 /* CJSONSerializer.h */,
-				4F70F79F180B9BAE0034A304 /* CJSONSerializer.m */,
-				4F70F7A0180B9BAE0034A304 /* JSONRepresentation.h */,
-				4F70F7A1180B9BAE0034A304 /* NSDictionary_JSONExtensions.h */,
-				4F70F7A2180B9BAE0034A304 /* NSDictionary_JSONExtensions.m */,
-			);
-			name = TouchJSON;
-			path = ../../Shared/TouchJSON/Source;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -416,13 +390,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4F70F7A3180B9BAE0034A304 /* CJSONDeserializer.m in Sources */,
 				4F4D9F931439DAFD00AAB205 /* main.m in Sources */,
 				4F4D9F971439DAFD00AAB205 /* AtlasAppDelegate.m in Sources */,
 				4F4D9F9D1439DAFD00AAB205 /* AtlasViewController.m in Sources */,
 				4F4D9FCD1439DBB200AAB205 /* ATEdge.m in Sources */,
 				4F4D9FCE1439DBB200AAB205 /* ATNode.m in Sources */,
-				4F70F7A5180B9BAE0034A304 /* NSDictionary_JSONExtensions.m in Sources */,
 				4F4D9FCF1439DBB200AAB205 /* ATBarnesHutBranch.m in Sources */,
 				4F4D9FD01439DBB200AAB205 /* ATBarnesHutTree.m in Sources */,
 				4F4D9FD11439DBB200AAB205 /* ATKernel.m in Sources */,
@@ -432,7 +404,6 @@
 				4F4D9FD51439DBB200AAB205 /* ATSpring.m in Sources */,
 				4F4D9FD71439DBB200AAB205 /* ATSystem.m in Sources */,
 				4F4D9FD81439DBB200AAB205 /* ATSystemParams.m in Sources */,
-				4F70F7A4180B9BAE0034A304 /* CJSONSerializer.m in Sources */,
 				4F4D9FD91439DBB200AAB205 /* ATSystemState.m in Sources */,
 				4F46F56C143ADA270051A67A /* AtlasCanvasView.m in Sources */,
 			);
