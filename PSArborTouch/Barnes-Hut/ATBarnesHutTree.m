@@ -26,7 +26,7 @@ typedef NS_ENUM(NSInteger, BHLocation) {
 
 @property (nonatomic, readonly) ATBarnesHutBranch *dequeueBranch;
 
-@property (nonatomic, readwrite, strong) ATBarnesHutBranch *root;
+@property (nonatomic, readwrite, strong) ATBarnesHutBranch *rootBranch;
 
 @property (nonatomic, readwrite, assign) CGRect bounds;
 @property (nonatomic, readwrite, assign) CGFloat theta;
@@ -54,8 +54,8 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     self.bounds = bounds;
     self.theta = theta;
     self.branchCounter = 0;
-    self.root = self.dequeueBranch;
-    self.root.bounds = bounds;
+    self.rootBranch = self.dequeueBranch;
+    self.rootBranch.bounds = bounds;
 }
 
 - (void) insertParticle:(ATParticle *)newParticle 
@@ -65,7 +65,7 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     if (newParticle == nil) return;
     
     // add a particle to the tree, starting at the current _root and working down
-    ATBarnesHutBranch *node = self.root;
+    ATBarnesHutBranch *node = self.rootBranch;
     
     NSMutableArray* queue = [NSMutableArray arrayWithCapacity:32];
         
@@ -200,7 +200,7 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     // the specified repulsion to the particle
     
     NSMutableArray *queue = [NSMutableArray arrayWithCapacity:32];
-    [queue addObject:self.root];
+    [queue addObject:self.rootBranch];
     
     while ([queue count] != 0) {
         
@@ -233,10 +233,10 @@ typedef NS_ENUM(NSInteger, BHLocation) {
             
             if ( (size / dist) > self.theta ) { // i.e., s/d > Θ
                 // open the quad and recurse
-                if (nodeBranch.ne != nil) [queue addObject:nodeBranch.ne];
-                if (nodeBranch.nw != nil) [queue addObject:nodeBranch.nw];
-                if (nodeBranch.se != nil) [queue addObject:nodeBranch.se];
-                if (nodeBranch.sw != nil) [queue addObject:nodeBranch.sw];
+                if (nodeBranch.northEstQuadrant != nil) [queue addObject:nodeBranch.northEstQuadrant];
+                if (nodeBranch.northWestQuadrant != nil) [queue addObject:nodeBranch.northWestQuadrant];
+                if (nodeBranch.southEstQuadrant != nil) [queue addObject:nodeBranch.southEstQuadrant];
+                if (nodeBranch.southWestQuadrant != nil) [queue addObject:nodeBranch.southWestQuadrant];
             } else {
                 // treat the quad as a single body
                 CGPoint d = CGPointSubtract(particle.position, CGPointDivideFloat(nodeBranch.position, nodeBranch.mass));
@@ -285,19 +285,19 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     switch (location) {
             
         case BHLocationNE:
-            branch.ne = object;
+            branch.northEstQuadrant = object;
             break;
             
         case BHLocationSE:
-            branch.se = object;
+            branch.southEstQuadrant = object;
             break;
             
         case BHLocationSW:
-            branch.sw = object;
+            branch.southWestQuadrant = object;
             break;
             
         case BHLocationNW:
-            branch.nw = object;
+            branch.northWestQuadrant = object;
             break;
             
         case BHLocationUD:
@@ -314,19 +314,19 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     switch (location) {
             
         case BHLocationNE:
-            return branch.ne;
+            return branch.northEstQuadrant;
             break;
             
         case BHLocationSE:
-            return branch.se;
+            return branch.southEstQuadrant;
             break;
             
         case BHLocationSW:
-            return branch.sw;
+            return branch.southWestQuadrant;
             break;
             
         case BHLocationNW:
-            return branch.nw;
+            return branch.northWestQuadrant;
             break;
             
         case BHLocationUD:
@@ -347,10 +347,10 @@ typedef NS_ENUM(NSInteger, BHLocation) {
         [self.branches addObject:branch];
     } else {
         branch = self.branches[self.branchCounter];
-        branch.ne = nil;
-        branch.nw = nil;
-        branch.se = nil;
-        branch.sw = nil;
+        branch.northEstQuadrant = nil;
+        branch.northWestQuadrant = nil;
+        branch.southEstQuadrant = nil;
+        branch.southWestQuadrant = nil;
         branch.bounds = CGRectZero;
         branch.mass = 0.0;
         branch.position = CGPointZero;

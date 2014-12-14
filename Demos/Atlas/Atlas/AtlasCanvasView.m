@@ -65,7 +65,7 @@
             CGContextSetLineWidth(context, 1.0);
             
             // Drawing code for the barnes-hut trees
-            ATBarnesHutBranch *root = self.system.physics.bhTree.root;
+            ATBarnesHutBranch *root = self.system.physics.bhTree.rootBranch;
             
             if ( root ) {
                 [self recursiveDrawBranches:root inContext:context];
@@ -152,20 +152,20 @@
     [self drawOutlineWithContext:context andRect:[self scaleRect:branch.bounds]];
     
     // Draw any sub branches
-    if (branch.se != nil && [branch.se isKindOfClass:ATBarnesHutBranch.class] == YES) {
-        [self recursiveDrawBranches:branch.se inContext:context];
+    if (branch.southEstQuadrant != nil && [branch.southEstQuadrant isKindOfClass:ATBarnesHutBranch.class] == YES) {
+        [self recursiveDrawBranches:branch.southEstQuadrant inContext:context];
     }
     
-    if (branch.sw != nil && [branch.sw isKindOfClass:ATBarnesHutBranch.class] == YES ) {
-        [self recursiveDrawBranches:branch.sw inContext:context];
+    if (branch.southWestQuadrant != nil && [branch.southWestQuadrant isKindOfClass:ATBarnesHutBranch.class] == YES ) {
+        [self recursiveDrawBranches:branch.southWestQuadrant inContext:context];
     }
     
-    if (branch.ne != nil && [branch.ne isKindOfClass:ATBarnesHutBranch.class] == YES ) {
-        [self recursiveDrawBranches:branch.ne inContext:context];
+    if (branch.northEstQuadrant != nil && [branch.northEstQuadrant isKindOfClass:ATBarnesHutBranch.class] == YES ) {
+        [self recursiveDrawBranches:branch.northEstQuadrant inContext:context];
     }
     
-    if (branch.nw != nil && [branch.nw isKindOfClass:ATBarnesHutBranch.class] == YES ) {
-        [self recursiveDrawBranches:branch.nw inContext:context];
+    if (branch.northWestQuadrant != nil && [branch.northWestQuadrant isKindOfClass:ATBarnesHutBranch.class] == YES ) {
+        [self recursiveDrawBranches:branch.northWestQuadrant inContext:context];
     }
     
 }

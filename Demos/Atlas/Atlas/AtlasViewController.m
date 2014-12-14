@@ -68,7 +68,7 @@
     [self loadMapData];
     
     // start the simulation
-    [system_ start:YES];
+    [system_ start];
     
     // set up touch event handling
     [self addGestureRecognizersToCanvas:self.canvas];
@@ -303,7 +303,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     }
     
     // start the simulation
-    [system_ start:YES];
+    [system_ start];
 }
 
 

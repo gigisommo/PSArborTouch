@@ -14,10 +14,11 @@
 @property (nonatomic, assign) CGFloat mass;
 @property (nonatomic, assign) CGPoint position;
 
-@property (nonatomic, strong) id ne;
-@property (nonatomic, strong) id nw;
-@property (nonatomic, strong) id se;
-@property (nonatomic, strong) id sw;
+// Can be a branch or a single particle
+@property (nonatomic, strong) id northEstQuadrant;
+@property (nonatomic, strong) id northWestQuadrant;
+@property (nonatomic, strong) id southWestQuadrant;
+@property (nonatomic, strong) id southEstQuadrant;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 

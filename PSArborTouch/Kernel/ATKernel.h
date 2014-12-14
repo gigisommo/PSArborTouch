@@ -27,7 +27,7 @@
 #pragma mark - Simulation Control
 
 - (void)stepSimulation;
-- (void)start:(BOOL)unpause;
+- (void)start;
 - (void)stop;
 
 #pragma mark - Debug Physics Properties

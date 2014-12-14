@@ -27,7 +27,6 @@ static CGFloat const kTimerInterval = 0.05;
 @property (nonatomic, strong) dispatch_source_t timer;
 @property (nonatomic, strong) dispatch_queue_t queue;
 
-@property (nonatomic, assign) BOOL paused;
 @property (nonatomic, assign) BOOL running;
 
 @property (nonatomic, readwrite, assign) CGRect simulationBounds;
@@ -130,45 +129,33 @@ static CGFloat const kTimerInterval = 0.05;
     //    });
 }
 
-- (void)start:(BOOL)unpause
+- (void)start
 {
     if (self.running) {
         return;               // already running
     }
-    
-    if (self.paused && !unpause) {
-        return;    // we've been stopped before, wait for unpause
-    }
-    
-    self.paused = NO;
-    
     // start the simulation
     
-    if (!self.running) {
-        self.running = YES;
+    self.running = YES;
+    
+    // Configure handler when it fires
+    dispatch_source_set_event_handler( [self physicsTimer], ^{
         
-        // Configure handler when it fires
-        dispatch_source_set_event_handler( [self physicsTimer], ^{
-            
-            // Call back to main thread (UI Thread) to update the text
-            //            dispatch_async(dispatch_get_main_queue(), ^{
-            [self stepSimulation];
-            //            });
-            
-        });
+        // Call back to main thread (UI Thread) to update the text
+        //            dispatch_async(dispatch_get_main_queue(), ^{
+        [self stepSimulation];
+        //            });
         
-        // Start the timer
-        dispatch_resume( [self physicsTimer] );
-    }
+    });
+    
+    // Start the timer
+    dispatch_resume( [self physicsTimer] );
     
     NSLog(@"Kernel started.");
 }
 
 - (void)stop
 {
-    // stop the simulation
-    self.paused = YES;
-    
     BOOL timerInitialized = (self.timer != nil);
     if ( timerInitialized && self.running ) {
         self.running = NO;

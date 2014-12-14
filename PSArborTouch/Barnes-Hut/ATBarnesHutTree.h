@@ -13,7 +13,7 @@
 
 @interface ATBarnesHutTree : NSObject
 
-@property (nonatomic, readonly, strong) ATBarnesHutBranch *root;
+@property (nonatomic, readonly, strong) ATBarnesHutBranch *rootBranch;
 @property (nonatomic, readonly, assign) CGRect bounds;
 @property (nonatomic, readonly, assign) CGFloat theta;
 
