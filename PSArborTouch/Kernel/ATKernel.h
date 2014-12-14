@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <dispatch/dispatch.h>
+#import "ATSystemRenderer.h"
 
 @class ATPhysics;
 @class ATParticle;
@@ -18,33 +18,17 @@
 @class ATSystemParams;
 
 @interface ATKernel : NSObject
-{
-
-@private
-    dispatch_source_t   timer_;
-    dispatch_queue_t    queue_;
-    
-    BOOL                paused_;
-    BOOL                running_;
-    
-    ATPhysics          *physics_;
-    
-    ATEnergy           *lastEnergy_;
-    CGRect              lastBounds_;
-    
-    id                  __unsafe_unretained delegate_;      // UPDATE THIS ! = id <protocol> delegate_;
-}
 
 #pragma mark - Rendering
 
-@property (nonatomic, unsafe_unretained) id delegate;
-- (BOOL) updateViewport;
+@property (nonatomic, weak) id <ATDebugRendering> delegate;
+- (BOOL)updateViewport;
 
 #pragma mark - Simulation Control
 
-- (void) stepSimulation;
-- (void) start:(BOOL)unpause;
-- (void) stop;
+- (void)stepSimulation;
+- (void)start:(BOOL)unpause;
+- (void)stop;
 
 #pragma mark - Debug Physics Properties
 
@@ -52,6 +36,8 @@
 
 #pragma mark - Cached Physics Properties
 
+// We cache certain properties to provide information while the physics simulation
+// is running.
 @property (nonatomic, readonly, copy) ATEnergy *simulationEnergy;
 @property (nonatomic, readonly, assign) CGRect simulationBounds;
 
@@ -60,13 +46,13 @@
 // Physics methods protected by a GCD queue to ensure serial execution.
 // TODO: Move into protocol / interface definition
 
-- (void) updateSimulation:(ATSystemParams *)params;
+- (void)updateSimulation:(ATSystemParams *)params;
 
-- (void) addParticle:(ATParticle *)particle;
-- (void) removeParticle:(ATParticle *)particle;
+- (void)addParticle:(ATParticle *)particle;
+- (void)removeParticle:(ATParticle *)particle;
 
-- (void) addSpring:(ATSpring *)spring;
-- (void) removeSpring:(ATSpring *)spring;
+- (void)addSpring:(ATSpring *)spring;
+- (void)removeSpring:(ATSpring *)spring;
 
 
 @end

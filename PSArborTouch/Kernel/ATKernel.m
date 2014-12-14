@@ -17,68 +17,57 @@
 
 
 // Interval in seconds: make sure this is more than 0
-#define kTimerInterval 0.05
-
+static CGFloat const kTimerInterval = 0.05;
 
 @interface ATKernel ()
 
 @property (nonatomic, readonly, assign) dispatch_queue_t physicsQueue;
 @property (nonatomic, readonly, assign) dispatch_source_t physicsTimer;
 
+@property (nonatomic, strong) dispatch_source_t timer;
+@property (nonatomic, strong) dispatch_queue_t queue;
+
+@property (nonatomic, assign) BOOL paused;
+@property (nonatomic, assign) BOOL running;
+
+@property (nonatomic, readwrite, assign) CGRect simulationBounds;
+
 @end
 
 
 @implementation ATKernel
 
-@synthesize physics = physics_;
-@synthesize delegate = delegate_;
-
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        timer_      = nil;
-        queue_      = nil;
-        paused_     = NO;
-        running_    = NO;
-        physics_    = [[ATPhysics alloc] initWithDeltaTime:0.02 
-                                               stiffness:1000.0 
-                                               repulsion:600.0 
-                                                friction:0.5];
-        lastEnergy_ = [[ATEnergy alloc] init];
-        lastBounds_ = CGRectMake(-1.0, -1.0, 2.0, 2.0);
+        _physics = [[ATPhysics alloc] initWithDeltaTime:0.02
+                                              stiffness:1000.0
+                                              repulsion:600.0
+                                               friction:0.5];
+        _simulationEnergy = [[ATEnergy alloc] init];
+        _simulationBounds = CGRectMake(-1.0, -1.0, 2.0, 2.0);
     }
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
-    delegate_ = nil;
-    
     // stop the simulation
     [self stop];
     
     // tear down the timer
-    BOOL timerInitialized = (timer_ != nil);
+    BOOL timerInitialized = (self.timer != nil);
     if ( timerInitialized ) {
-        dispatch_source_cancel(timer_);
-        dispatch_resume(timer_);  
+        dispatch_source_cancel(self.timer);
+        dispatch_resume(self.timer);
     }
 }
 
 
-#pragma mark - Cached Physics Properties
-
-// We cache certain properties to provide information while the physics simulation 
-// is running.
-
-@synthesize simulationEnergy = lastEnergy_;
-@synthesize simulationBounds = lastBounds_;
-
-
 #pragma mark - Rendering (override in subclass)
 
-- (BOOL) updateViewport
+- (BOOL)updateViewport
 {
     return NO;
 }
@@ -86,73 +75,77 @@
 
 #pragma mark - Simulation Control
 
-- (void) stepSimulation
+- (void)stepSimulation
 {
     // step physics
+    
+    //    dispatch_async( [self physicsQueue] , ^{
+    
+    // Run physics loop.
+    BOOL stillActive = [self.physics update];
+    
+    // Update the viewport
+    if ([self updateViewport]) {
+        stillActive = YES;
+    }
+    
+    // Stop timer if not stillActive.
+    if (!stillActive) {
+        [self stop];
         
-//    dispatch_async( [self physicsQueue] , ^{
+    }
+    
+    // Call back to main thread (UI Thread) to update the text
+    // Dispatch SYNC or ASYNC here?  Could we queue too many updates?
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
         
-        // Run physics loop.  
-        BOOL stillActive = [physics_ update];
+        // Update cached properties
+        //
+        //      - Energy in the simulation
+        //      - Bounds of the simulation
         
-        // Update the viewport
-        if ([self updateViewport]) {
-            stillActive = YES;
+        ATEnergy *currentEnergy = self.physics.energy;
+        
+        self.simulationEnergy.sum = currentEnergy.sum;
+        self.simulationEnergy.max = currentEnergy.max;
+        self.simulationEnergy.mean = currentEnergy.mean;
+        self.simulationEnergy.count = currentEnergy.count;
+        
+        self.simulationBounds = self.physics.bounds;
+        
+        
+        // Call back into the main thread
+        //
+        //      - Update the debug barnes-hut display
+        //      - Update the debug bounds display
+        //      - Update the debug viewport display
+        //      - Update the edge display
+        //      - Update the node display
+        
+        if ([self.delegate respondsToSelector:@selector(redraw)]) {
+            [self.delegate redraw];
         }
-        
-        // Stop timer if not stillActive.
-        if (!stillActive) {
-            [self stop];
-            
-        }
-        
-        // Call back to main thread (UI Thread) to update the text
-        // Dispatch SYNC or ASYNC here?  Could we queue too many updates?
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            // Update cached properties
-            //
-            //      - Energy in the simulation
-            //      - Bounds of the simulation
-            
-            ATEnergy *currentEnergy = physics_.energy;
-            
-            lastEnergy_.sum     = currentEnergy.sum;
-            lastEnergy_.max     = currentEnergy.max;
-            lastEnergy_.mean    = currentEnergy.mean;
-            lastEnergy_.count   = currentEnergy.count;
-            
-            lastBounds_         = physics_.bounds;
-            
-            
-            // Call back into the main thread
-            //
-            //      - Update the debug barnes-hut display
-            //      - Update the debug bounds display
-            //      - Update the debug viewport display
-            //      - Update the edge display
-            //      - Update the node display
-            
-            if ( self.delegate ) {
-                if ( self.delegate && [self.delegate conformsToProtocol:@protocol(ATDebugRendering) ]) {
-                    [(NSObject<ATDebugRendering> *)self.delegate redraw];
-                }
-            }
-        });
-//    });
+    });
+    //    });
 }
 
-- (void) start:(BOOL)unpause
+- (void)start:(BOOL)unpause
 {
-    if (running_) return;               // already running
-    if (paused_ && !unpause) return;    // we've been stopped before, wait for unpause
-    paused_ = NO;
+    if (self.running) {
+        return;               // already running
+    }
+    
+    if (self.paused && !unpause) {
+        return;    // we've been stopped before, wait for unpause
+    }
+    
+    self.paused = NO;
     
     // start the simulation
     
-    if (running_ == NO) {
-        running_ = YES;
+    if (!self.running) {
+        self.running = YES;
         
         // Configure handler when it fires
         dispatch_source_set_event_handler( [self physicsTimer], ^{
@@ -165,22 +158,21 @@
         });
         
         // Start the timer
-        dispatch_resume( [self physicsTimer] );  
+        dispatch_resume( [self physicsTimer] );
     }
     
     NSLog(@"Kernel started.");
 }
 
-- (void) stop 
+- (void)stop
 {
     // stop the simulation
+    self.paused = YES;
     
-    paused_ = YES;
-    
-    BOOL timerInitialized = (timer_ != nil);
-    if ( timerInitialized && running_ ) {
-        running_ = NO;
-        dispatch_suspend(timer_);
+    BOOL timerInitialized = (self.timer != nil);
+    if ( timerInitialized && self.running ) {
+        self.running = NO;
+        dispatch_suspend(self.timer);
     }
     
     NSLog(@"Kernel stopped.");
@@ -192,19 +184,19 @@
 // Physics methods protected by a GCD queue to ensure serial execution.  We do
 // not want to do things like add and remove items from a simulation mid-calculation.
 
-- (void) updateSimulation:(ATSystemParams *)params
+- (void)updateSimulation:(ATSystemParams *)params
 {
     NSParameterAssert(params != nil);
     if (params == nil) return;
     
     dispatch_async( [self physicsQueue] , ^{
-        
-        physics_.repulsion  = params.repulsion;
-        physics_.stiffness  = params.stiffness;
-        physics_.friction   = params.friction;
-        physics_.deltaTime  = params.deltaTime;
-        physics_.gravity    = params.gravity;
-        physics_.theta      = params.precision;
+        ATPhysics *physics = self.physics;
+        physics.repulsion = params.repulsion;
+        physics.stiffness = params.stiffness;
+        physics.friction = params.friction;
+        physics.deltaTime = params.deltaTime;
+        physics.gravity = params.gravity;
+        physics.theta = params.precision;
         
         // params.timeout;  // Used by kernel to control update cycle
         
@@ -212,53 +204,53 @@
     });
 }
 
-- (void) addParticle:(ATParticle *)particle
+- (void)addParticle:(ATParticle *)particle
 {
     NSParameterAssert(particle != nil);
     if (particle == nil) return;
     
     dispatch_async( [self physicsQueue] , ^{
         
-        [physics_ addParticle:particle];
-
+        [self.physics addParticle:particle];
+        
         // start, unpaused NO
     });
 }
 
-- (void) removeParticle:(ATParticle *)particle
+- (void)removeParticle:(ATParticle *)particle
 {
     NSParameterAssert(particle != nil);
     if (particle == nil) return;
     
     dispatch_async( [self physicsQueue] , ^{
         
-        [physics_ removeParticle:particle];
+        [self.physics removeParticle:particle];
         
         // start, unpaused NO
     });
 }
 
-- (void) addSpring:(ATSpring *)spring
+- (void)addSpring:(ATSpring *)spring
 {
     NSParameterAssert(spring != nil);
     if (spring == nil) return;
     
     dispatch_async( [self physicsQueue] , ^{
         
-        [physics_ addSpring:spring];
+        [self.physics addSpring:spring];
         
         // start, unpaused NO
     });
 }
 
-- (void) removeSpring:(ATSpring *)spring
+- (void)removeSpring:(ATSpring *)spring
 {
     NSParameterAssert(spring != nil);
     if (spring == nil) return;
     
     dispatch_async( [self physicsQueue] , ^{
         
-        [physics_ removeSpring:spring];
+        [self.physics removeSpring:spring];
         
         // start, unpaused NO
     });
@@ -267,33 +259,32 @@
 
 #pragma mark - Internal Interface
 
-- (dispatch_queue_t) physicsQueue
+- (dispatch_queue_t)physicsQueue
 {
-    if (queue_ == nil) {
-        queue_ = dispatch_queue_create("com.prestonsoft.psarbortouch", DISPATCH_QUEUE_SERIAL);
+    if (self.queue == nil) {
+        self.queue = dispatch_queue_create("com.prestonsoft.psarbortouch", DISPATCH_QUEUE_SERIAL);
     }
-    return queue_;
+    return self.queue;
 }
 
-- (dispatch_source_t) physicsTimer
+- (dispatch_source_t)physicsTimer
 {
-    BOOL timerNotInitialized = (timer_ == nil);
-    if ( timerNotInitialized ) {
+    if (!self.timer) {
         
         //        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         
         // create our timer source
         //        _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
         
-        timer_ = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, [self physicsQueue]);
+        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, [self physicsQueue]);
         
         // set the time to fire
-        dispatch_source_set_timer(timer_,
+        dispatch_source_set_timer(self.timer,
                                   dispatch_time(DISPATCH_TIME_NOW, kTimerInterval * NSEC_PER_SEC),
                                   kTimerInterval * NSEC_PER_SEC, (kTimerInterval * NSEC_PER_SEC) / 2.0);
     }
     
-    return timer_;
+    return self.timer;
 }
 
 @end
