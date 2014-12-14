@@ -8,31 +8,7 @@
 
 #import "ATEnergy.h"
 
-
-@interface ATEnergy ()
-// reserved
-@end
-
-
 @implementation ATEnergy
-
-@synthesize sum     = sum_;
-@synthesize max     = max_;
-@synthesize mean    = mean_;
-@synthesize count   = count_;
-
-- (instancetype) init
-{
-    self = [super init];
-    if (self) {
-        sum_    = 0.0;
-        max_    = 0.0;
-        mean_   = 0.0;
-        count_  = 0;
-    }
-    return self;
-}
-
 
 #pragma mark - NSCopying
 
@@ -40,16 +16,12 @@
 {
     id theCopy = [[[self class] allocWithZone:zone] init];  // use designated initializer
     
-    [theCopy setSum:sum_];
-    [theCopy setMax:max_];
-    [theCopy setMean:mean_];
-    [theCopy setCount:count_];
+    [theCopy setSum:self.sum];
+    [theCopy setMax:self.max];
+    [theCopy setMean:self.mean];
+    [theCopy setCount:self.count];
     
     return theCopy;
 }
-
-
-#pragma mark - Internal Interface
-
 
 @end

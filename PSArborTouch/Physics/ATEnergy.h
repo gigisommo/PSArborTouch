@@ -9,20 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @interface ATEnergy : NSObject <NSCopying>
-{
-
-@private
-    CGFloat sum_;
-    CGFloat max_;
-    CGFloat mean_;
-    NSUInteger count_;
-}
 
 @property (nonatomic, assign) CGFloat sum;
 @property (nonatomic, assign) CGFloat max;
 @property (nonatomic, assign) CGFloat mean;
 @property (nonatomic, assign) NSUInteger count;
-
-- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
 @end
