@@ -9,18 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface ATBarnesHutBranch : NSObject
-{
-    
-@private
-    CGRect  bounds_;
-    CGFloat mass_;
-    CGPoint position_;
-    
-    id ne_;
-    id nw_;
-    id se_;
-    id sw_;
-}
 
 @property (nonatomic, assign) CGRect bounds;
 @property (nonatomic, assign) CGFloat mass;
@@ -31,10 +19,10 @@
 @property (nonatomic, strong) id se;
 @property (nonatomic, strong) id sw;
 
-- (instancetype) init NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
 
-- (instancetype) initWithBounds:(CGRect)bounds 
-                 mass:(CGFloat)mass 
-             position:(CGPoint)position;
+- (instancetype)initWithBounds:(CGRect)bounds
+                          mass:(CGFloat)mass
+                      position:(CGPoint)position;
 
 @end
