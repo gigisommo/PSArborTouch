@@ -19,23 +19,13 @@ static NSInteger nextNodeIndex_ = 1;
 
 @implementation ATNode
 
-@synthesize name        = name_;
-@synthesize index       = index_;
-@synthesize mass        = mass_;
-@synthesize position    = position_;
-@synthesize fixed       = fixed_;
-@synthesize userData    = data_;
-
 - (instancetype) init
 {
     self = [super init];
     if (self) {
-        index_      = @(nextNodeIndex_++);
-        name_       = nil;
-        mass_       = 1.0;
-        position_   = CGPointZero;
-        fixed_      = NO;
-        data_       = nil;
+        _index = @(nextNodeIndex_++);
+        _mass = 1.0;
+        _position = CGPointZero;
     }
     return self;
 }
@@ -44,10 +34,10 @@ static NSInteger nextNodeIndex_ = 1;
 {
     self = [self init];
     if (self) {
-        name_       = [name copy];
-        mass_       = mass;
-        position_   = position;
-        fixed_      = fixed;
+        _name = [name copy];
+        _mass = mass;
+        _position = position;
+        _fixed = fixed;
     }
     return self;
 }
@@ -56,13 +46,11 @@ static NSInteger nextNodeIndex_ = 1;
 {
     self = [self init];
     if (self) {
-        name_ = [name copy];
-        data_ = data;
+        _name = [name copy];
+        _userData = data;
     }
     return self;
 }
-
-
 
 #pragma mark - Internal Interface
 
@@ -71,26 +59,26 @@ static NSInteger nextNodeIndex_ = 1;
 
 - (void) encodeWithCoder:(NSCoder *)encoder 
 {
-    [encoder encodeObject:name_ forKey:@"name"];
-    [encoder encodeFloat:mass_ forKey:@"mass"];
-    [encoder encodeCGPoint:position_ forKey:@"position"];
-    [encoder encodeBool:fixed_ forKey:@"fixed"];
-    [encoder encodeObject:index_ forKey:@"index"];
-    [encoder encodeObject:data_ forKey:@"data"];
+    [encoder encodeObject:self.name forKey:@"name"];
+    [encoder encodeFloat:self.mass forKey:@"mass"];
+    [encoder encodeCGPoint:self.position forKey:@"position"];
+    [encoder encodeBool:self.fixed forKey:@"fixed"];
+    [encoder encodeObject:self.index forKey:@"index"];
+    [encoder encodeObject:self.userData forKey:@"data"];
 }
 
 - (instancetype) initWithCoder:(NSCoder *)decoder 
 {
     self = [self init];
     if (self) {
-        name_       = [decoder decodeObjectForKey:@"name"];
-        mass_       = [decoder decodeFloatForKey:@"mass"];
-        position_   = [decoder decodeCGPointForKey:@"position"];
-        fixed_      = [decoder decodeBoolForKey:@"fixed"];
-        index_      = [decoder decodeObjectForKey:@"index"];
-        data_       = [decoder decodeObjectForKey:@"data"];
+        _name = [decoder decodeObjectForKey:@"name"];
+        _mass = [decoder decodeFloatForKey:@"mass"];
+        _position = [decoder decodeCGPointForKey:@"position"];
+        _fixed = [decoder decodeBoolForKey:@"fixed"];
+        _index = [decoder decodeObjectForKey:@"index"];
+        _userData = [decoder decodeObjectForKey:@"data"];
         
-        nextNodeIndex_  = MAX(nextNodeIndex_, ([index_ integerValue] + 1));
+        nextNodeIndex_  = MAX(nextNodeIndex_, ([_index integerValue] + 1));
     }
     
     return self;

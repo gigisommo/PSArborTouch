@@ -11,20 +11,9 @@
 @class ATNode;
 
 @interface ATEdge : NSObject <NSCoding>
-{
-    
-@private
-    ATNode     *source_;
-    ATNode     *target_;
-    CGFloat     length_;
-    
-    NSNumber   *index_;
-    
-    NSMutableDictionary *data_;
-}
 
-@property (nonatomic, readonly, strong) ATNode *source;
-@property (nonatomic, readonly, strong) ATNode *target;
+@property (nonatomic, readonly, strong) ATNode *sourceNode;
+@property (nonatomic, readonly, strong) ATNode *destinationNode;
 @property (nonatomic, assign) CGFloat length;
 
 @property (nonatomic, readonly, strong) NSNumber *index;

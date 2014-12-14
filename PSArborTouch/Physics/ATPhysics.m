@@ -279,7 +279,7 @@
 - (void) applySprings 
 {
     for (ATSpring *spring in activeSprings_) {
-        CGPoint d = CGPointSubtract(spring.target.position, spring.source.position); // the direction of the spring
+        CGPoint d = CGPointSubtract(spring.destinationNode.position, spring.sourceNode.position); // the direction of the spring
         
         CGFloat displacement = spring.length - CGPointMagnitude(d);
         

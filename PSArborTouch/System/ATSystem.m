@@ -316,7 +316,7 @@
         [self.state removeNamesObjectForKey:node.name];
         
         for (ATEdge *edge in self.state.edges) {
-            if (edge.source.index == node.index || edge.target.index == node.index) {
+            if (edge.sourceNode.index == node.index || edge.destinationNode.index == node.index) {
                 [self removeEdge:edge];
             }
         }
@@ -416,8 +416,8 @@
     
     [self.state removeEdgesObjectForKey:edge.index];
     
-    NSNumber *src = edge.source.index;
-    NSNumber *dst = edge.target.index;
+    NSNumber *src = edge.sourceNode.index;
+    NSNumber *dst = edge.destinationNode.index;
     
     NSMutableDictionary *from = [self.state getAdjacencyObjectForKey:src];
     
@@ -488,7 +488,7 @@
     
     NSMutableSet *nodeEdges = [NSMutableSet set];
     for (ATEdge *edge in self.state.edges) {
-        if (edge.target == aNode) {
+        if (edge.destinationNode == aNode) {
             [nodeEdges addObject:edge];
         }
     }

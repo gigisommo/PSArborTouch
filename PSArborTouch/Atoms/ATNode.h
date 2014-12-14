@@ -9,18 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface ATNode : NSObject <NSCoding>
-{
-    
-@private
-    NSString   *name_;
-    CGFloat     mass_;
-    CGPoint     position_;
-    BOOL        fixed_;
-    
-    NSNumber   *index_;
-    
-    NSMutableDictionary *data_;
-}
 
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, assign) CGFloat mass;

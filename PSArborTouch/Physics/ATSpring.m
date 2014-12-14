@@ -30,12 +30,12 @@
 
 - (ATParticle *)point1
 {
-    return (ATParticle *)self.source; 
+    return (ATParticle *)self.sourceNode; 
 }
 
 - (ATParticle *)point2
 {
-    return (ATParticle *)self.target; 
+    return (ATParticle *)self.destinationNode; 
 }
 
 
