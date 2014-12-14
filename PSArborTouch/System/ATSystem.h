@@ -23,20 +23,6 @@ typedef NS_ENUM(NSInteger, ATViewConversion) {
 @class ATEdge;
 
 @interface ATSystem : ATKernel
-{
-    
-@private
-    CGRect              viewBounds_;
-    UIEdgeInsets        viewPadding_;
-    ATViewConversion    viewMode_;
-    
-    CGFloat             viewTweenStep_;
-    CGRect              tweenBoundsCurrent_;
-    CGRect              tweenBoundsTarget_;
-    
-    ATSystemState       *state_;
-    ATSystemParams      *parameters_;
-}
 
 #pragma mark - Tween Debugging
 
@@ -64,30 +50,27 @@ typedef NS_ENUM(NSInteger, ATViewConversion) {
 
 #pragma mark - Viewport Translation
 
-- (CGRect) toViewRect:(CGRect)physicsRect;
-- (CGSize) toViewSize:(CGSize)physicsSize;
+- (CGRect)toViewRect:(CGRect)physicsRect;
+- (CGSize)toViewSize:(CGSize)physicsSize;
 
-- (CGPoint) toViewPoint:(CGPoint)physicsPoint;
-- (CGPoint) fromViewPoint:(CGPoint)viewPoint;
+- (CGPoint)toViewPoint:(CGPoint)physicsPoint;
+- (CGPoint)fromViewPoint:(CGPoint)viewPoint;
 
-- (ATNode *) nearestNodeToPoint:(CGPoint)viewPoint;
-- (ATNode *) nearestNodeToPoint:(CGPoint)viewPoint withinRadius:(CGFloat)viewRadius;
+- (ATNode *)nearestNodeToPoint:(CGPoint)viewPoint;
+- (ATNode *)nearestNodeToPoint:(CGPoint)viewPoint withinRadius:(CGFloat)viewRadius;
 
 #pragma mark - Node Management
 
-- (ATNode *) getNode:(NSString *)nodeName;
-- (ATNode *) addNode:(NSString *)name withData:(NSMutableDictionary *)data;
-- (void) removeNode:(NSString *)nodeName;
+- (ATNode *)getNode:(NSString *)nodeName;
+- (ATNode *)addNode:(NSString *)name withData:(NSMutableDictionary *)data;
+- (void)removeNode:(NSString *)nodeName;
 
 #pragma mark - Edge Management
 
-- (ATEdge *) addEdgeFromNode:(NSString *)source toNode:(NSString *)target withData:(NSMutableDictionary *)data;
-- (void) removeEdge:(ATEdge *)edge;
-- (NSSet *) getEdgesFromNode:(NSString *)source toNode:(NSString *)target;
-- (NSSet *) getEdgesFromNode:(NSString *)node;
-- (NSSet *) getEdgesToNode:(NSString *)node;
-
-// Graft ?
-// Merge ?
+- (ATEdge *)addEdgeFromNode:(NSString *)source toNode:(NSString *)target withData:(NSMutableDictionary *)data;
+- (void)removeEdge:(ATEdge *)edge;
+- (NSSet *)getEdgesFromNode:(NSString *)source toNode:(NSString *)target;
+- (NSSet *)getEdgesFromNode:(NSString *)node;
+- (NSSet *)getEdgesToNode:(NSString *)node;
 
 @end

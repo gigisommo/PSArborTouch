@@ -18,87 +18,71 @@
 
 @interface ATSystem ()
 
-- (CGRect) ensureRect:(CGRect)rect minimumDimentions:(CGFloat)minimum;
-- (CGRect) tweenRect:(CGRect)sourceRect toRect:(CGRect)targetRect delta:(CGFloat)delta;
 @property (NS_NONATOMIC_IOSONLY, readonly) CGRect translationBounds;
+
+@property (nonatomic, readwrite, assign) CGRect tweenBoundsCurrent;
+
+@property (nonatomic, readwrite, assign) CGRect tweenBoundsTarget;
 
 @end
 
 
 @implementation ATSystem
 
-@synthesize state = state_;
-@synthesize parameters = parameters_;
-
-- (void) setParameters:(ATSystemParams *)parameters
+- (void)setParameters:(ATSystemParams *)parameters
 {
-    if (parameters_ != parameters) {
-        parameters_ = [parameters copy];
+    if (_parameters != parameters) {
+        _parameters = [parameters copy];
 
     }
     
-    [self updateSimulation:parameters_];
+    [self updateSimulation:_parameters];
 }
 
-- (instancetype) init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
-        state_          = [[ATSystemState alloc] init];
-        parameters_     = [[ATSystemParams alloc] init];
-        viewBounds_     = CGRectZero;
-        viewPadding_    = UIEdgeInsetsZero;
-        viewTweenStep_  = 0.04;
-        viewMode_       = ATViewConversionScale;
+        _state = [[ATSystemState alloc] init];
+        _parameters = [[ATSystemParams alloc] init];
+        _viewBounds = CGRectZero;
+        _viewPadding = UIEdgeInsetsZero;
+        _viewTweenStep = 0.04;
+        _viewMode = ATViewConversionScale;
     }
     return self;
 }
 
-- (instancetype) initWithState:(ATSystemState *)state parameters:(ATSystemParams *)parameters 
+- (instancetype)initWithState:(ATSystemState *)state parameters:(ATSystemParams *)parameters
 {
     self = [self init];
     if (self) {
-        state_      = state;
-        parameters_ = parameters;
+        _state = state;
+        _parameters = parameters;
     }
     return self;
 }
 
-
-
-#pragma mark - Tween Debugging
-
-@synthesize tweenBoundsCurrent = tweenBoundsCurrent_;
-@synthesize tweenBoundsTarget = tweenBoundsTarget_;
-
-
 #pragma mark - Viewport Management / Translation
 
-@synthesize viewBounds      = viewBounds_;
-
-- (void) setViewBounds:(CGRect)viewBounds
+- (void)setViewBounds:(CGRect)viewBounds
 {
-    viewBounds_ = viewBounds;
+    _viewBounds = viewBounds;
     [self updateViewport];
 }
 
-@synthesize viewPadding     = viewPadding_;
-@synthesize viewTweenStep   = viewTweenStep_;
-@synthesize viewMode        = viewMode_;
-
-
 #pragma mark - Viewport Translation
 
-- (CGRect) translationBounds {
+- (CGRect)translationBounds {
     // Adjusting the translation bounds defines what coordinate system is being used
     // as the camera.
     
     return self.simulationBounds;
 //    return tweenBoundsCurrent_;
-//    return tweenBoundsTarget_;
+//    return self.tweenBoundsTarget;
 }
 
-- (CGRect) toViewRect:(CGRect)physicsRect
+- (CGRect)toViewRect:(CGRect)physicsRect
 {
     CGRect ret;
     
@@ -109,19 +93,19 @@
 }
 
 // TODO: Precalculate most of this
-- (CGSize) toViewSize:(CGSize)physicsSize
+- (CGSize)toViewSize:(CGSize)physicsSize
 {
     // Return the size in the physics coordinate system if we dont have a screen size or current
     // viewport bounds.
-    if ( CGRectIsEmpty(viewBounds_) || CGRectIsEmpty(tweenBoundsCurrent_) ) {
+    if ( CGRectIsEmpty(self.viewBounds) || CGRectIsEmpty(self.tweenBoundsCurrent) ) {
         return physicsSize;
     }
     
     CGRect  fromBounds = [self translationBounds];
     
     // UIEdgeInsetsInsetRect
-    CGFloat adjustedScreenWidth     = CGRectGetWidth(viewBounds_)  - (viewPadding_.left + viewPadding_.right);
-    CGFloat adjustedScreenHeight    = CGRectGetHeight(viewBounds_) - (viewPadding_.top  + viewPadding_.bottom);
+    CGFloat adjustedScreenWidth     = CGRectGetWidth(self.viewBounds)  - (self.viewPadding.left + self.viewPadding.right);
+    CGFloat adjustedScreenHeight    = CGRectGetHeight(self.viewBounds) - (self.viewPadding.top  + self.viewPadding.bottom);
     
     
     CGFloat scaleX = physicsSize.width  / CGRectGetWidth(fromBounds);
@@ -146,19 +130,19 @@
 }
 
 // TODO: InsetRect, precalculate
-- (CGPoint) toViewPoint:(CGPoint)physicsPoint
+- (CGPoint)toViewPoint:(CGPoint)physicsPoint
 {
     // Return the point in the physics coordinate system if we dont have a screen size or current
     // viewport bounds.
-    if ( CGRectIsEmpty(viewBounds_) || CGRectIsEmpty(tweenBoundsCurrent_) ) {
+    if ( CGRectIsEmpty(self.viewBounds) || CGRectIsEmpty(self.tweenBoundsCurrent) ) {
         return physicsPoint;
     }
     
     CGRect  fromBounds = [self translationBounds];
     
     // UIEdgeInsetsInsetRect
-    CGFloat adjustedScreenWidth     = CGRectGetWidth(viewBounds_)  - (viewPadding_.left + viewPadding_.right);
-    CGFloat adjustedScreenHeight    = CGRectGetHeight(viewBounds_) - (viewPadding_.top  + viewPadding_.bottom);
+    CGFloat adjustedScreenWidth     = CGRectGetWidth(self.viewBounds)  - (self.viewPadding.left + self.viewPadding.right);
+    CGFloat adjustedScreenHeight    = CGRectGetHeight(self.viewBounds) - (self.viewPadding.top  + self.viewPadding.bottom);
     
     CGFloat scaleX = (physicsPoint.x - fromBounds.origin.x) / CGRectGetWidth(fromBounds);
     CGFloat scaleY = (physicsPoint.y - fromBounds.origin.y) / CGRectGetHeight(fromBounds);
@@ -169,8 +153,8 @@
     if (self.viewMode == ATViewConversionScale) {
         CGFloat uniformScale = MIN(adjustedScreenWidth, adjustedScreenHeight);
         
-        sx = scaleX * uniformScale + viewPadding_.right;
-        sy = scaleY * uniformScale + viewPadding_.top;
+        sx = scaleX * uniformScale + self.viewPadding.right;
+        sy = scaleY * uniformScale + self.viewPadding.top;
         
         // center
         sx += (adjustedScreenWidth  - uniformScale) / 2;
@@ -178,34 +162,34 @@
         
     } else { // Stretch
         
-        sx = scaleX * adjustedScreenWidth  + viewPadding_.right;
-        sy = scaleY * adjustedScreenHeight + viewPadding_.top;
+        sx = scaleX * adjustedScreenWidth  + self.viewPadding.right;
+        sy = scaleY * adjustedScreenHeight + self.viewPadding.top;
     }
     
     return CGPointMake(sx, sy);
 }
 // TODO: This is ugly
-- (CGPoint) fromViewPoint:(CGPoint)viewPoint
+- (CGPoint)fromViewPoint:(CGPoint)viewPoint
 {
     // Return the point in the screen coordinate system if we dont have a screen size.
-    if ( CGRectIsEmpty(viewBounds_) || CGRectIsEmpty(tweenBoundsCurrent_) ) {
+    if ( CGRectIsEmpty(self.viewBounds) || CGRectIsEmpty(self.tweenBoundsCurrent) ) {
         return viewPoint;
     }
     
     CGRect  toBounds = [self translationBounds];
     
     // UIEdgeInsetsInsetRect
-    CGFloat adjustedScreenWidth     = CGRectGetWidth(viewBounds_)  - (viewPadding_.left + viewPadding_.right);
-    CGFloat adjustedScreenHeight    = CGRectGetHeight(viewBounds_) - (viewPadding_.top  + viewPadding_.bottom);
+    CGFloat adjustedScreenWidth     = CGRectGetWidth(self.viewBounds)  - (self.viewPadding.left + self.viewPadding.right);
+    CGFloat adjustedScreenHeight    = CGRectGetHeight(self.viewBounds) - (self.viewPadding.top  + self.viewPadding.bottom);
     
-    CGFloat scaleX = (viewPoint.x - viewPadding_.right) / adjustedScreenWidth;
-    CGFloat scaleY = (viewPoint.y - viewPadding_.top)   / adjustedScreenHeight;
+    CGFloat scaleX = (viewPoint.x - self.viewPadding.right) / adjustedScreenWidth;
+    CGFloat scaleY = (viewPoint.y - self.viewPadding.top)   / adjustedScreenHeight;
     
     if (self.viewMode == ATViewConversionScale) {
         CGFloat uniformScale = MIN(adjustedScreenWidth, adjustedScreenHeight);
         
-        scaleX = (viewPoint.x - ((adjustedScreenWidth  - uniformScale) / 2) - viewPadding_.right) / uniformScale;
-        scaleY = (viewPoint.y - ((adjustedScreenHeight - uniformScale) / 2) - viewPadding_.top)   / uniformScale;
+        scaleX = (viewPoint.x - ((adjustedScreenWidth  - uniformScale) / 2) - self.viewPadding.right) / uniformScale;
+        scaleY = (viewPoint.y - ((adjustedScreenHeight - uniformScale) / 2) - self.viewPadding.top)   / uniformScale;
     }
         
     CGFloat px = scaleX * CGRectGetWidth(toBounds)  + toBounds.origin.x;
@@ -214,14 +198,14 @@
     return CGPointMake(px, py);
 }
 
-- (ATNode *) nearestNodeToPoint:(CGPoint)viewPoint 
+- (ATNode *)nearestNodeToPoint:(CGPoint)viewPoint
 {  
     // Find the nearest node to a particular position
     CGPoint translatedPoint = CGPointZero;
     
     // if view bounds has been specified, presume viewPoint is in screen pixel
     // units and convert it back to the physics engine coordinates
-    if ( CGRectIsEmpty(viewBounds_) == NO ) {
+    if ( CGRectIsEmpty(self.viewBounds) == NO ) {
         translatedPoint = [self fromViewPoint:viewPoint];
     } else {
         translatedPoint = viewPoint;
@@ -244,7 +228,7 @@
     return closestNode;
 }
 
-- (ATNode *) nearestNodeToPoint:(CGPoint)viewPoint withinRadius:(CGFloat)viewRadius;
+- (ATNode *)nearestNodeToPoint:(CGPoint)viewPoint withinRadius:(CGFloat)viewRadius;
 {
     NSParameterAssert(viewRadius > 0.0);    // Provide a viewRadius is the views coordinate system
                                             // or use nearestNodeToPoint instead.
@@ -257,7 +241,7 @@
         
         // if view bounds has been specified, presume viewPoint is in screen pixel
         // units and convert the closest node to view space for comparison
-        if ( CGRectIsEmpty(viewBounds_) == NO ) {
+        if ( CGRectIsEmpty(self.viewBounds) == NO ) {
             translatedNodePoint = [self toViewPoint:closestNode.position];
         } else {
             translatedNodePoint = closestNode.position;
@@ -275,7 +259,7 @@
 
 #pragma mark - Node Management
 
-- (ATNode *) addNode:(NSString *)name withData:(NSMutableDictionary *)data 
+- (ATNode *)addNode:(NSString *)name withData:(NSMutableDictionary *)data
 {
     NSParameterAssert(name != nil);
     
@@ -304,7 +288,7 @@
     }
 }
 
-- (void) removeNode:(NSString *)nodeName 
+- (void)removeNode:(NSString *)nodeName
 {
     NSParameterAssert(nodeName != nil);
     
@@ -325,7 +309,7 @@
     }
 }
 
-- (ATNode *) getNode:(NSString *)nodeName 
+- (ATNode *)getNode:(NSString *)nodeName
 {
     NSParameterAssert(nodeName != nil);
     
@@ -336,7 +320,7 @@
 
 #pragma mark - Edge Management
 
-- (ATEdge *) addEdgeFromNode:(NSString *)source toNode:(NSString *)target withData:(NSMutableDictionary*)data 
+- (ATEdge *)addEdgeFromNode:(NSString *)source toNode:(NSString *)target withData:(NSMutableDictionary*)data
 {
     NSParameterAssert(source != nil);
     NSParameterAssert(target != nil);
@@ -408,7 +392,7 @@
     return edge;
 }
 
-- (void) removeEdge:(ATEdge *)edge 
+- (void)removeEdge:(ATEdge *)edge
 {    
     NSParameterAssert(edge != nil);
     
@@ -428,7 +412,7 @@
     [self removeSpring:(ATSpring *)edge];  // Note: Upcast
 }
 
-- (NSSet *) getEdgesFromNode:(NSString *)source toNode:(NSString *)target 
+- (NSSet *)getEdgesFromNode:(NSString *)source toNode:(NSString *)target
 {
     NSParameterAssert(source != nil);
     NSParameterAssert(target != nil);
@@ -458,7 +442,7 @@
     return [NSSet setWithObject:to];
 }
 
-- (NSSet *) getEdgesFromNode:(NSString *)node 
+- (NSSet *)getEdgesFromNode:(NSString *)node
 {
     NSParameterAssert(node != nil);
     
@@ -477,7 +461,7 @@
     return [NSSet set];
 }
 
-- (NSSet *) getEdgesToNode:(NSString *)node 
+- (NSSet *)getEdgesToNode:(NSString *)node
 {
     NSParameterAssert(node != nil);
     
@@ -499,7 +483,7 @@
 
 #pragma mark - Internal Interface
 
-- (CGRect) ensureRect:(CGRect)rect minimumDimentions:(CGFloat)minimum
+- (CGRect)ensureRect:(CGRect)rect minimumDimentions:(CGFloat)minimum
 {
     NSParameterAssert(minimum > 0.0);
     
@@ -518,7 +502,7 @@
     return CGRectInset(rect, -requiredOutsetX, -requiredOutsetY);
 }
 
-- (CGRect) tweenRect:(CGRect)sourceRect toRect:(CGRect)targetRect delta:(CGFloat)delta
+- (CGRect)tweenRect:(CGRect)sourceRect toRect:(CGRect)targetRect delta:(CGFloat)delta
 {
     NSParameterAssert(delta <= 1.0);
     NSParameterAssert(delta >= 0.0);
@@ -540,47 +524,47 @@
     return tweenRect;
 }
 
-- (BOOL) updateViewport
+- (BOOL)updateViewport
 {
     // step the renderer's current bounding box closer to the true box containing all
     // the nodes. if _screenStep is set to 1 there will be no lag. if _screenStep is
     // set to 0 the bounding box will remain stationary after being initially set 
     
     // Return NO if we dont have a screen size.
-    if ( CGRectIsEmpty(viewBounds_) ) {
+    if ( CGRectIsEmpty(self.viewBounds) ) {
         return NO;
     }
     
     // Ensure the view bounds rect has a minimum size
-    tweenBoundsTarget_ = [self ensureRect:self.simulationBounds minimumDimentions:4.0];
+    self.tweenBoundsTarget = [self ensureRect:self.simulationBounds minimumDimentions:4.0];
     
     
     // Configure the current viewport bounds
-    if ( CGRectIsEmpty(tweenBoundsCurrent_) ) {
+    if ( CGRectIsEmpty(self.tweenBoundsCurrent) ) {
         if ([self.state.nodes count] == 0) return NO;
-        tweenBoundsCurrent_ = tweenBoundsTarget_;
+        self.tweenBoundsCurrent = self.tweenBoundsTarget;
         return YES;
     }
     
     // If we are not tweening, then no need to calculate. Avoid endless viewport update.
-    if (viewTweenStep_ <= 0.0) return NO;
+    if (self.viewTweenStep <= 0.0) return NO;
     
     // Move the current viewport bounds closer to the true box containing all the nodes.
-    CGRect newBounds = [self tweenRect:tweenBoundsCurrent_ 
-                                toRect:tweenBoundsTarget_ 
-                                 delta:viewTweenStep_];
+    CGRect newBounds = [self tweenRect:self.tweenBoundsCurrent 
+                                toRect:self.tweenBoundsTarget 
+                                 delta:self.viewTweenStep];
     
     
     // calculate the difference
-    CGFloat newX = CGRectGetWidth(tweenBoundsCurrent_)  - CGRectGetWidth(newBounds);
-    CGFloat newY = CGRectGetHeight(tweenBoundsCurrent_) - CGRectGetHeight(newBounds);
+    CGFloat newX = CGRectGetWidth(self.tweenBoundsCurrent)  - CGRectGetWidth(newBounds);
+    CGFloat newY = CGRectGetHeight(self.tweenBoundsCurrent) - CGRectGetHeight(newBounds);
     CGPoint sizeDiff = CGPointMake(newX, newY);
-    CGPoint diff = CGPointMake(CGPointDistance(tweenBoundsCurrent_.origin, newBounds.origin), 
+    CGPoint diff = CGPointMake(CGPointDistance(self.tweenBoundsCurrent.origin, newBounds.origin), 
                                CGPointMagnitude(sizeDiff));
     
     // return YES if we're still approaching the target, NO if we're ‘close enough’
-    if (diff.x * CGRectGetWidth(viewBounds_) > 1.0 || diff.y * CGRectGetHeight(viewBounds_) > 1.0 ){
-        tweenBoundsCurrent_ = newBounds;
+    if (diff.x * CGRectGetWidth(self.viewBounds) > 1.0 || diff.y * CGRectGetHeight(self.viewBounds) > 1.0 ){
+        self.tweenBoundsCurrent = newBounds;
         return YES;
     } else {
         return NO;        
