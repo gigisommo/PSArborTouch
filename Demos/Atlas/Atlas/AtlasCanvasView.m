@@ -214,11 +214,12 @@
     CGContextSetRGBFillColor(context, 0.0, 0.0, 0.0, 1.0); // black
     
     // Draw the text label
-    [particle.name drawInRect:fillRect 
-                     withFont:[self font] 
-                lineBreakMode:UILineBreakModeTailTruncation
-                    alignment:UITextAlignmentCenter];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.alignment = NSTextAlignmentCenter;
     
+    [particle.name drawInRect:fillRect
+               withAttributes:@{NSFontAttributeName: [self font],
+                                NSParagraphStyleAttributeName: paragraphStyle}];
 }
 
 - (UIFont *)font
