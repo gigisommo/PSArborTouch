@@ -12,16 +12,6 @@
 @class ATParticle;
 
 @interface ATBarnesHutTree : NSObject
-{
-    
-@private
-    NSMutableArray     *branches_;
-    NSUInteger          branchCounter_;
-    
-    ATBarnesHutBranch  *root_;
-    CGRect              bounds_;
-    CGFloat             theta_;
-}
 
 @property (nonatomic, readonly, strong) ATBarnesHutBranch *root;
 @property (nonatomic, readonly, assign) CGRect bounds;

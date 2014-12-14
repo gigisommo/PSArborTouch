@@ -11,9 +11,6 @@
 #import "ATParticle.h"
 #import "ATGeometry.h"
 
-
-@interface ATBarnesHutTree ()
-
 typedef NS_ENUM(NSInteger, BHLocation) {
     BHLocationUD = 0,
     BHLocationNW,
@@ -22,45 +19,43 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     BHLocationSW,
 } ;
 
-- (BHLocation) _whichQuad:(ATParticle *)particle ofBranch:(ATBarnesHutBranch *)branch;
-- (void) _setQuad:(BHLocation)location ofBranch:(ATBarnesHutBranch *)branch withObject:(id)object;
-- (id) _getQuad:(BHLocation)location ofBranch:(ATBarnesHutBranch *)branch;
-@property (NS_NONATOMIC_IOSONLY, readonly, strong) ATBarnesHutBranch *_dequeueBranch;
+@interface ATBarnesHutTree ()
+
+@property (nonatomic, strong) NSMutableArray *branches;
+@property (nonatomic, assign) NSUInteger branchCounter;
+
+@property (nonatomic, readonly) ATBarnesHutBranch *dequeueBranch;
+
+@property (nonatomic, readwrite, strong) ATBarnesHutBranch *root;
+
+@property (nonatomic, readwrite, assign) CGRect bounds;
+@property (nonatomic, readwrite, assign) CGFloat theta;
 
 @end
 
-
 @implementation ATBarnesHutTree
-
-@synthesize root = root_;
-@synthesize bounds = bounds_;
-@synthesize theta = theta_;
 
 - (instancetype) init
 {
     self = [super init];
     if (self) {
-        branches_       = [NSMutableArray arrayWithCapacity:32];
-        branchCounter_  = 0;
-        root_           = nil;
-        bounds_         = CGRectZero;
-        theta_          = 0.4;
+        _branches = [NSMutableArray array];
+        _branchCounter = 0;
+        _bounds = CGRectZero;
+        _theta = 0.4;
     }
     return self;
 }
 
-
-
 #pragma mark - Public Methods
 
-- (void) updateWithBounds:(CGRect)bounds theta:(CGFloat)theta 
+- (void)updateWithBounds:(CGRect)bounds theta:(CGFloat)theta
 {
-    bounds_         = bounds;
-    theta_          = theta;
-    
-    branchCounter_  = 0;
-    root_           = [self _dequeueBranch];
-    root_.bounds    = bounds;
+    self.bounds = bounds;
+    self.theta = theta;
+    self.branchCounter = 0;
+    self.root = self.dequeueBranch;
+    self.root.bounds = bounds;
 }
 
 - (void) insertParticle:(ATParticle *)newParticle 
@@ -70,7 +65,7 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     if (newParticle == nil) return;
     
     // add a particle to the tree, starting at the current _root and working down
-    ATBarnesHutBranch *node = root_;
+    ATBarnesHutBranch *node = self.root;
     
     NSMutableArray* queue = [NSMutableArray arrayWithCapacity:32];
         
@@ -147,7 +142,7 @@ typedef NS_ENUM(NSInteger, BHLocation) {
             // replace the previously particle-occupied quad with a new internal branch node
             ATParticle *oldParticle = objectAtQuad;
             
-            ATBarnesHutBranch *newBranch = [self _dequeueBranch];
+            ATBarnesHutBranch *newBranch = self.dequeueBranch;
             [self _setQuad:p_quad ofBranch:node withObject:newBranch];
             newBranch.bounds = CGRectMake(branch_origin.x, branch_origin.y, branch_size.width, branch_size.height);
             node.mass = p_mass;
@@ -204,8 +199,8 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     // find all particles/branch nodes this particle interacts with and apply
     // the specified repulsion to the particle
     
-    NSMutableArray* queue = [NSMutableArray arrayWithCapacity:32];
-    [queue addObject:root_];
+    NSMutableArray *queue = [NSMutableArray arrayWithCapacity:32];
+    [queue addObject:self.root];
     
     while ([queue count] != 0) {
         
@@ -236,7 +231,7 @@ typedef NS_ENUM(NSInteger, BHLocation) {
             CGFloat dist = CGPointMagnitude(CGPointSubtract(particle.position, CGPointDivideFloat(nodeBranch.position, nodeBranch.mass)));
             CGFloat size = sqrtf( CGRectGetWidth(nodeBranch.bounds) * CGRectGetHeight(nodeBranch.bounds) );
             
-            if ( (size / dist) > theta_ ) { // i.e., s/d > Θ
+            if ( (size / dist) > self.theta ) { // i.e., s/d > Θ
                 // open the quad and recurse
                 if (nodeBranch.ne != nil) [queue addObject:nodeBranch.ne];
                 if (nodeBranch.nw != nil) [queue addObject:nodeBranch.nw];
@@ -342,16 +337,16 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     }
 }
 
-- (ATBarnesHutBranch *) _dequeueBranch 
+- (ATBarnesHutBranch *)dequeueBranch
 {    
     // Recycle the tree nodes between iterations, nodes are owned by the branches array
     ATBarnesHutBranch *branch = nil;
     
-    if ( branches_.count == 0 || branchCounter_ > (branches_.count -1) ) {
+    if ( [self.branches count] == 0 || self.branchCounter > ([self.branches count] -1) ) {
         branch = [[ATBarnesHutBranch alloc] init];
-        [branches_ addObject:branch];
+        [self.branches addObject:branch];
     } else {
-        branch = branches_[branchCounter_];
+        branch = self.branches[self.branchCounter];
         branch.ne = nil;
         branch.nw = nil;
         branch.se = nil;
@@ -363,7 +358,7 @@ typedef NS_ENUM(NSInteger, BHLocation) {
     
 //    NSLog(@"Branch count:%u", _branches.count);
     
-    branchCounter_++;
+    self.branchCounter++;
 
     // DEBUG for a graph of 4 nodes
 //    if (branchCounter_ > 6) {
