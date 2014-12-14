@@ -14,38 +14,14 @@
 @class ATSpring;
 
 @interface ATPhysics : NSObject
-{
-    
-@private
-    ATBarnesHutTree *bhTree_;
-    NSMutableArray  *activeParticles_;
-    NSMutableArray  *activeSprings_;
-    NSMutableArray  *freeParticles_;
-    
-    NSMutableArray  *particles_;
-    NSMutableArray  *springs_;
-    
-    ATEnergy        *energy_;
-    CGRect           bounds_;
-    
-    CGFloat     speedLimit_;
-    
-    CGFloat     deltaTime_;
-    CGFloat     stiffness_;
-    CGFloat     repulsion_;
-    CGFloat     friction_;
-    
-    BOOL        gravity_;
-    CGFloat     theta_;
-}
 
 @property (nonatomic, readonly, strong) ATBarnesHutTree *bhTree;
 
-@property (nonatomic, readonly, strong) NSArray *particles;
+@property (nonatomic, readonly) NSArray *particles;
 - (void) addParticle:(ATParticle *)particle;
 - (void) removeParticle:(ATParticle *)particle;
 
-@property (nonatomic, readonly, strong) NSArray *springs;
+@property (nonatomic, readonly) NSArray *springs;
 - (void) addSpring:(ATSpring *)spring;
 - (void) removeSpring:(ATSpring *)spring;
 
@@ -62,6 +38,7 @@
 @property (nonatomic, assign) BOOL gravity;
 @property (nonatomic, assign) CGFloat theta;
 
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL update;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 
@@ -69,7 +46,5 @@
               stiffness:(CGFloat)stiffness 
               repulsion:(CGFloat)repulsion 
                friction:(CGFloat)friction;
-
-@property (NS_NONATOMIC_IOSONLY, readonly) BOOL update;
 
 @end
