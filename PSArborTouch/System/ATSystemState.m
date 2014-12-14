@@ -14,157 +14,157 @@
 
 @interface ATSystemState ()
 
+@property (nonatomic, strong) NSMutableDictionary *mutableNodes;
+@property (nonatomic, strong) NSMutableDictionary *mutableEdges;
+@property (nonatomic, strong) NSMutableDictionary *mutableAdjacency;
+@property (nonatomic, strong) NSMutableDictionary *mutableNames;
+
 @end
 
 
 @implementation ATSystemState
 
-//@synthesize nodes       = nodes_;
-- (NSArray *) nodes
+- (NSArray *)nodes
 {
-    return [nodes_ allValues];
+    return [self.mutableNodes allValues];
 }
 
-//@synthesize edges       = edges_;
-- (NSArray *) edges
+- (NSArray *)edges
 {
-    return [edges_ allValues];
+    return [self.mutableEdges allValues];
 }
 
-//@synthesize adjacency   = adjacency_;
-- (NSArray *) adjacency
+- (NSArray *)adjacency
 {
-    return [adjacency_ allValues]; 
+    return [self.mutableAdjacency allValues];
 }
 
-//@synthesize names       = names_;
-- (NSArray *) names
+- (NSArray *)names
 {
-    return [names_ allValues]; 
+    return [self.mutableNames allValues];
 }
 
-- (instancetype) init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
-        nodes_      = [NSMutableDictionary dictionaryWithCapacity:32];      
-        edges_      = [NSMutableDictionary dictionaryWithCapacity:32];      
-        adjacency_  = [NSMutableDictionary dictionaryWithCapacity:32];             
-        names_      = [NSMutableDictionary dictionaryWithCapacity:32];
+        _mutableNodes = [NSMutableDictionary dictionary];
+        _mutableEdges = [NSMutableDictionary dictionary];
+        _mutableAdjacency = [NSMutableDictionary dictionary];
+        _mutableNames = [NSMutableDictionary dictionary];
     }
-    
     return self;
 }
 
 
 #pragma mark - Nodes
 
-- (void) setNodesObject:(ATNode *)NodesObject forKey:(NSNumber *)Key
+- (void)setNodesObject:(ATNode *)NodesObject forKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     NSParameterAssert(NodesObject != nil);
     
     if (NodesObject == nil || Key == nil) return;
-    nodes_[Key] = NodesObject;
+    self.mutableNodes[Key] = NodesObject;
 }
 
-- (void) removeNodesObjectForKey:(NSNumber *)Key
+- (void)removeNodesObjectForKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     
     if (Key == nil) return;
-    [nodes_ removeObjectForKey:Key];
+    [self.mutableNodes removeObjectForKey:Key];
 }
 
-- (ATNode *) getNodesObjectForKey:(NSNumber *)Key
+- (ATNode *)getNodesObjectForKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     
     if (Key == nil) return nil;
-    return nodes_[Key];
+    return self.mutableNodes[Key];
 }
 
 #pragma mark - Edges
 
-- (void) setEdgesObject:(ATEdge *)EdgesObject forKey:(NSNumber *)Key
+- (void)setEdgesObject:(ATEdge *)EdgesObject forKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     NSParameterAssert(EdgesObject != nil);
     
     if (EdgesObject == nil || Key == nil) return;
-    edges_[Key] = EdgesObject;
+    self.mutableEdges[Key] = EdgesObject;
 }
 
-- (void) removeEdgesObjectForKey:(NSNumber *)Key
+- (void)removeEdgesObjectForKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     
     if (Key == nil) return;
-    [edges_ removeObjectForKey:Key];
+    [self.mutableEdges removeObjectForKey:Key];
 }
 
-- (ATEdge *) getEdgesObjectForKey:(NSNumber *)Key
+- (ATEdge *)getEdgesObjectForKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     
     if (Key == nil) return nil;
-    return edges_[Key];
+    return self.mutableEdges[Key];
 }
 
 
 #pragma mark - Adjacency
 
-- (void) setAdjacencyObject:(NSMutableDictionary *)AdjacencyObject forKey:(NSNumber *)Key
+- (void)setAdjacencyObject:(NSMutableDictionary *)AdjacencyObject forKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     NSParameterAssert(AdjacencyObject != nil);
     
     if (AdjacencyObject == nil || Key == nil) return;
-    adjacency_[Key] = AdjacencyObject;
+    self.mutableAdjacency[Key] = AdjacencyObject;
 }
 
-- (void) removeAdjacencyObjectForKey:(NSNumber *)Key
+- (void)removeAdjacencyObjectForKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     
     if (Key == nil) return;
-    [adjacency_ removeObjectForKey:Key];
+    [self.mutableAdjacency removeObjectForKey:Key];
 }
 
-- (NSMutableDictionary *) getAdjacencyObjectForKey:(NSNumber *)Key
+- (NSMutableDictionary *)getAdjacencyObjectForKey:(NSNumber *)Key
 {
     NSParameterAssert(Key != nil);
     
     if (Key == nil) return nil;
-    return adjacency_[Key];
+    return self.mutableAdjacency[Key];
 }
 
 
 #pragma mark - Names
 
-- (void) setNamesObject:(ATNode *)NamesObject forKey:(NSString *)Key
+- (void)setNamesObject:(ATNode *)NamesObject forKey:(NSString *)Key
 {
     NSParameterAssert(Key != nil);
     NSParameterAssert(NamesObject != nil);
     
     if (NamesObject == nil || Key == nil) return;
-    names_[Key] = NamesObject;
+    self.mutableNames[Key] = NamesObject;
 }
 
-- (void) removeNamesObjectForKey:(NSString *)Key
+- (void)removeNamesObjectForKey:(NSString *)Key
 {
     NSParameterAssert(Key != nil);
     
     if (Key == nil) return;
-    [names_ removeObjectForKey:Key];
+    [self.mutableNames removeObjectForKey:Key];
 }
 
-- (ATNode *) getNamesObjectForKey:(NSString *)Key
+- (ATNode *)getNamesObjectForKey:(NSString *)Key
 {
     NSParameterAssert(Key != nil);
     
     if (Key == nil) return nil;
-    return names_[Key];
+    return self.mutableNames[Key];
 }
 
 
@@ -172,22 +172,22 @@
 #pragma mark - Keyed Archiving
 
 
-- (void) encodeWithCoder:(NSCoder *)encoder 
+- (void)encodeWithCoder:(NSCoder *)encoder
 {
-    [encoder encodeObject:nodes_ forKey:@"nodes"];
-    [encoder encodeObject:edges_ forKey:@"edges"];
-    [encoder encodeObject:adjacency_ forKey:@"adjacency"];
-    [encoder encodeObject:names_ forKey:@"names"];
+    [encoder encodeObject:self.mutableNodes forKey:@"nodes"];
+    [encoder encodeObject:self.mutableEdges forKey:@"edges"];
+    [encoder encodeObject:self.mutableAdjacency forKey:@"adjacency"];
+    [encoder encodeObject:self.mutableNames forKey:@"names"];
 }
 
-- (instancetype) initWithCoder:(NSCoder *)decoder 
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {
     self = [super init];
     if (self) {
-        nodes_      = [decoder decodeObjectForKey:@"nodes"];
-        edges_      = [decoder decodeObjectForKey:@"edges"];
-        adjacency_  = [decoder decodeObjectForKey:@"adjacency"];
-        names_      = [decoder decodeObjectForKey:@"names"];
+        self.mutableNodes = [decoder decodeObjectForKey:@"nodes"];
+        self.mutableEdges = [decoder decodeObjectForKey:@"edges"];
+        self.mutableAdjacency = [decoder decodeObjectForKey:@"adjacency"];
+        self.mutableNames = [decoder decodeObjectForKey:@"names"];
     }
     return self;
 }

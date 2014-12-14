@@ -12,19 +12,6 @@
 @class ATEdge;
 
 @interface ATSystemState : NSObject <NSCoding>
-{
-    
-@private
-//    *nodes;      // lookup based on node _id's from the worker
-//    *edges;      // likewise
-//    *adjacency;  // NSMutableDictionary (_id of source) -> NSMutableDictionary (_id of target) -> Edge
-//    *names;      // lookup table based on 'name' field in data objects
-    
-    NSMutableDictionary *nodes_;
-    NSMutableDictionary *edges_;
-    NSMutableDictionary *adjacency_;
-    NSMutableDictionary *names_;
-}
 
 @property (nonatomic, readonly, strong) NSArray *nodes;
 - (void) setNodesObject:(ATNode *)NodesObject forKey:(NSNumber *)Key;
